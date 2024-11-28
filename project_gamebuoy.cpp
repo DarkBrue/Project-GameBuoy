@@ -5,8 +5,10 @@
 
 #include <iostream> // For IO debugging
 #include <SFML/Graphics.hpp> // For window/rendering calls
+#include "Project-Libraries/resize_window.h"
 
 int main()
 {
+   std::cout << "COMPLETE" << std::endl;
    return 0;
 }
