@@ -2,28 +2,64 @@
 // 2024-11-27
 //
 // Contains main
+// Check constants.h for more information on constant variables
 
 #include <iostream> // For IO debugging
-#include <SFML/Graphics.hpp> // For window/rendering calls
-#include "Project-Libraries/resize_window.h"
+#include <SFML/Graphics.hpp>   // For window/rendering calls
+#include "Project-Libraries/resize_window.h"   // Handles resizing screen
+#include "Project-Libraries/constants.h"   // Access to commonly used variables
 
-const int VISIBLE_WIDTH = 10;   // 10 tiles wide
-const int VISIBLE_HEIGHT = 9;   // 9 tiles tall
+// Function: drawVisibleGrid
+void drawVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                     sf::RenderWindow& window)
+{
+    window.clear();
+   // Loop to draw the VisibleGrid
+   for (int y = 0; y < VISIBLE_HEIGHT; y++)
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         window.draw(VisibleGrid[y][x]);
+      }
+   }
+   window.display();
+}
 
-const int DEFAULT_WINDOW_WIDTH = 160;   // 160 pixels wide
-const int DEFAULT_WINDOW_HEIGHT = 144;   // 144 pixels tall
+// Function: handleKeyPress
+// - handles event where key is pressed (generally user input)
+void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow &window,
+                    sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH])
+{
+   // Events that require updating the entire VisibleGrid
+   if (input == LEFT_KEY || input == RIGHT_KEY
+       || input == UP_KEY || input == DOWN_KEY)
+   {
+      drawVisibleGrid(VisibleGrid, window);
+   }
 
-const int TILE_SIZE = 16;   // Defualt tile size of 16 pixels
+   // Events that require resizing the screen
+   else if (input == NUM1_KEY || input == NUM2_KEY || input == NUM3_KEY)
+   {
+      // Scale factor of the screen and tiles
+      unsigned int scaleFactor = 1;
+
+      if (input == NUM1_KEY)      scaleFactor = 1;
+      else if (input == NUM2_KEY) scaleFactor = 2;
+      else if (input == NUM3_KEY) scaleFactor = 3;
+      resizeWindow(window, scaleFactor, VisibleGrid);
+   }
+}
 
 // Function: initializeVisibleGrid
 // - initalizes a grid of textures that will be displayed to the window
-int initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH], sf::Texture& texture)
+int initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                          sf::Texture& texture)
 {
    for (int y = 0; y < VISIBLE_HEIGHT; y++)
    {
       for (int x = 0; x < VISIBLE_WIDTH; x++)
       {
-         VisibleGrid[y][x].setTexture(texture);
+         VisibleGrid[y][x].setTexture(texture); // Applies missing_texture for now
          VisibleGrid[y][x].setPosition(x * TILE_SIZE, y * TILE_SIZE);
       }
    }
@@ -41,8 +77,10 @@ int main()
    missing_texture.setSmooth(false);   // Disable smooth filter
 
    // Create grid that will be displayed to the window
+   // NOTE: SHOULD ONLY CONTAIN GAME TERRAIN, NOT MENUS
    sf::Sprite VisibleGrid[VISIBLE_HEIGHT][VISIBLE_WIDTH];
 
+   // Initialize VisibleGrid with missing_texture
    initializeVisibleGrid(VisibleGrid, missing_texture);
 
    // Create main window
@@ -61,21 +99,10 @@ int main()
          // Check for key presses
          else if (event.type == sf::Event::KeyPressed)
          {
-            // Only update screen when arrow keys are pressed
-            window.clear();
-
-            for (int y = 0; y < VISIBLE_HEIGHT; y++)
-            {
-               for (int x = 0; x < VISIBLE_WIDTH; x++)
-               {
-                  window.draw(VisibleGrid[y][x]);
-               }
-            }
-
-            window.display();
+            handleKeyPress(event.key.code, window, VisibleGrid);
          }
-      }
-   }
+      } // End of event poll
+   } // End of game loop
 
    return EXIT_SUCCESS;
 }

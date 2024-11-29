@@ -1,3 +1,4 @@
+// resize_window.h
 // Bruce Smith
 // 2024-11-28
 //
@@ -7,7 +8,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>   // For window/rendering calls
+#include "constants.h"   // Access to commonly used variables
 
 // Function: resizeWindow
 // - Handles requests to resize the window and its sprites
-void resizeWindow(sf::RenderWindow &window, unsigned int scale);
+void resizeWindow(sf::RenderWindow &window, unsigned int scale,
+                  sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH]);
