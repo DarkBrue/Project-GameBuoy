@@ -1,5 +1,6 @@
+// project_gamebuoy.cpp
 // Bruce Smith
-// 2024-11-27
+// 2024-11-29
 //
 // Contains main
 // Check constants.h for more information on constant variables
@@ -7,13 +8,14 @@
 #include <iostream> // For IO debugging
 #include <SFML/Graphics.hpp>   // For window/rendering calls
 #include "Project-Libraries/resize_window.h"   // Handles resizing screen
+#include "Project-Libraries/mapLoader.h"   // Handles loading and unloading map data
 #include "Project-Libraries/constants.h"   // Access to commonly used variables
 
 // Function: drawVisibleGrid
 void drawVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
                      sf::RenderWindow& window)
 {
-    window.clear();
+   window.clear();
    // Loop to draw the VisibleGrid
    for (int y = 0; y < VISIBLE_HEIGHT; y++)
    {
@@ -41,12 +43,12 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow &window,
    else if (input == NUM1_KEY || input == NUM2_KEY || input == NUM3_KEY)
    {
       // Scale factor of the screen and tiles
-      unsigned int scaleFactor = 1;
+      unsigned int scale_factor = 1;
 
-      if (input == NUM1_KEY)      scaleFactor = 1;
-      else if (input == NUM2_KEY) scaleFactor = 2;
-      else if (input == NUM3_KEY) scaleFactor = 3;
-      resizeWindow(window, scaleFactor, VisibleGrid);
+      if (input == NUM1_KEY)      scale_factor = 1;
+      else if (input == NUM2_KEY) scale_factor = 2;
+      else if (input == NUM3_KEY) scale_factor = 3;
+      resizeWindow(window, scale_factor, VisibleGrid);
    }
 }
 

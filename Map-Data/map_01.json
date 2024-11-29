@@ -1,0 +1,9 @@
+{
+   "texture_atlast": "../Assets/Texture-Atlas/basic_terrain.png",
+   "map_data": [
+      [ 2, 3, 0, 1],
+      [ 2, 3, 0, 1],
+      [ 2, 3, 3, 3],
+      [ 2, 3, 0, 1]
+   ]
+}
