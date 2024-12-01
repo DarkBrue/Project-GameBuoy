@@ -1,6 +1,8 @@
-{
-   "texture_atlast": "../Assets/Texture-Atlas/basic_terrain.png",
-   "map_data": [
+﻿{
+   "texture_atlas": "Assets/Texture-Atlas/basic_terrain.png",
+   "map_width": 4,
+   "map_height": 4,
+   "MapData": [
       [ 2, 3, 0, 1],
       [ 2, 3, 0, 1],
       [ 2, 3, 3, 3],

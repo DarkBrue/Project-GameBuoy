@@ -16,7 +16,13 @@
 
 struct Map {
    sf::Texture texture_atlas; // Store texture atlas
+   unsigned int texture_atlas_width; // Store texture atlas width in tiles
+   unsigned int texture_atlas_height; // Store texture atlas height in tiles
+   unsigned int map_width; // Store map width in tiles
+   unsigned int map_height; // Store map width in tiles
    std::vector<std::vector<int>> MapData; // Matrix for storing tile data
 };
 
 Map loadMap(const std::string& filename);
+
+void unloadMap(Map& map);

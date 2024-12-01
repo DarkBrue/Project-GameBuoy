@@ -12,5 +12,5 @@
 
 // Function: resizeWindow
 // - Handles requests to resize the window and its sprites
-void resizeWindow(sf::RenderWindow &window, unsigned int scale,
+void resizeWindow(sf::RenderWindow &window, Player& player, unsigned int scale,
                   sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH]);

@@ -10,11 +10,12 @@
 
 // Function: resizeWindow
 // - Check header for details
-void resizeWindow(sf::RenderWindow &window, unsigned int scale,
+// NOTE: MIGHT TAKE LIST OF NPCS ON SCREEN TO RESIZE
+void resizeWindow(sf::RenderWindow &window, Player& player, unsigned int scale,
                   sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH])
 {
    // Default ratio of the screen
-   sf::Vector2u DefaultSize = {160, 144};
+   sf::Vector2u DefaultSize = {DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT};
 
    // Create new screen ratio
    sf::Vector2u NewSize = {DefaultSize.x * scale, DefaultSize.y * scale};
@@ -26,10 +27,15 @@ void resizeWindow(sf::RenderWindow &window, unsigned int scale,
       for (int x = 0; x < VISIBLE_WIDTH; x++)
       {
          VisibleGrid[y][x].setScale(scale, scale);
-         VisibleGrid[y][x].setPosition(x * TILE_SIZE * scale,
-                                       y * TILE_SIZE * scale);
+         VisibleGrid[y][x].setPosition(x * TILE_WIDTH * scale,
+                                       y * TILE_HEIGHT * scale);
          window.draw(VisibleGrid[y][x]);
       }
    }
+   player.player_sprite.setScale(scale, scale);
+   player.player_sprite.setPosition(PLAYER_SCREEN_POS_X * TILE_WIDTH * scale,
+                                    PLAYER_SCREEN_POS_Y * TILE_HEIGHT * scale);
+
+   window.draw(player.player_sprite);
    window.display();
 }
