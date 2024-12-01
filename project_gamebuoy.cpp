@@ -17,13 +17,6 @@
 // Used to scale window and sprites
 unsigned int scale_factor = 2;
 
-//struct Player
-//{
-//   int pos_X; // Player x position within a map
-//   int pos_Y; // Player y position within a map
-//   sf::Sprite player_sprite;
-   //std::vector<sf::Texture> player_animations (FILL LATER);
-//};
 
 // Function: drawVisibleGrid
 // NOTE: MIGHT TAKE LIST OF NPCS ON SCREEN TO RESIZE
