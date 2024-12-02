@@ -35,6 +35,12 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
       if (input == RIGHT_KEY)
       {
          translateVisibleGridRight(VisibleGrid, map, Textures, player, black_texture);
+         player.pos_X++; // Increment players x-position in the map
+      }
+      else if (input == LEFT_KEY)
+      {
+         translateVisibleGridLeft(VisibleGrid, map, Textures, player, black_texture);
+         player.pos_X--; // Increment players x-position in the map
       }
 
       drawVisibleGrid(VisibleGrid, window, player);
@@ -118,8 +124,8 @@ int main()
    }
    player_texture.setSmooth(false);   // Disable smooth filter
    player.player_sprite.setTexture(player_texture);
-   player.pos_X = 4;
-   player.pos_Y = 4;
+   player.pos_X = 5;
+   player.pos_Y = 5;
    player.player_sprite.setScale(scale_factor, scale_factor);
    player.player_sprite.setPosition(PLAYER_SCREEN_POS_X * TILE_WIDTH * scale_factor,
                                     PLAYER_SCREEN_POS_Y * TILE_HEIGHT * scale_factor);

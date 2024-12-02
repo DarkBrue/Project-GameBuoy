@@ -27,3 +27,10 @@ void initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WID
 void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
                                const Map& map, const std::vector<sf::Texture>& Textures,
                                Player& player, const sf::Texture& black_texture);
+
+// Function: translateVisibleGridLeft()
+// - translates tiles within a sprite to its right neighbor
+// - loads in a new column of tiles on the far left side
+void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                               const Map& map, const std::vector<sf::Texture>& Textures,
+                               Player& player, const sf::Texture& black_texture);
