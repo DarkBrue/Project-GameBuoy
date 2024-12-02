@@ -95,20 +95,6 @@ void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE
    // Put in completely black texture if map data doesn't exist
    else
    {
-      // Delete start here
-      sf::Image all_black;
-      all_black.create(TILE_WIDTH * getScaleFactor(),
-                       TILE_HEIGHT * getScaleFactor(),
-                       sf::Color::Black);
-
-      sf::Texture all_black_texture;
-      if(!all_black_texture.loadFromImage(all_black))
-      {
-         std::cerr<<"Failed to create all black texture"<<std::endl;
-         return;
-      }
-      // Delete end here
-
       for (int y = 0; y < VISIBLE_HEIGHT; y++)
       {
          VisibleGrid[y][VISIBLE_WIDTH - 1].setTexture(black_texture);
