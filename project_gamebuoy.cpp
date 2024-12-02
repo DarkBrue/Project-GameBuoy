@@ -8,43 +8,35 @@
 #include <iostream> // For IO debugging
 #include <SFML/Graphics.hpp>   // For window/rendering calls
 #include <vector>   // For vector
-#include <cmath>   // For abs
 #include "Project-Libraries/resize_window.h"   // Handles resizing screen
-#include "Project-Libraries/mapLoader.h"   // Handles loading and unloading map data
+#include "Project-Libraries/map_loader.h"   // Handles loading and unloading map data
 #include "Project-Libraries/constants.h"   // Access to commonly used variables
+#include "Project-Libraries/visible_grid.h" // For VisibleGrid functions
 
 // Don't touch this variable unless you know what you are doing
 // Used to scale window and sprites
-unsigned int scale_factor = 2;
-
-
-// Function: drawVisibleGrid
-// NOTE: MIGHT TAKE LIST OF NPCS ON SCREEN TO RESIZE
-void drawVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
-                     sf::RenderWindow& window, Player& player)
+int scale_factor = 2;
+int getScaleFactor()
 {
-   window.clear();
-   // Loop to draw the VisibleGrid
-   for (int y = 0; y < VISIBLE_HEIGHT; y++)
-   {
-      for (int x = 0; x < VISIBLE_WIDTH; x++)
-      {
-         window.draw(VisibleGrid[y][x]);
-      }
-   }
-   window.draw(player.player_sprite);
-   window.display();
+   return scale_factor;
 }
 
 // Function: handleKeyPress
 // - handles event where key is pressed (generally user input)
 void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& player,
+                    const std::vector<sf::Texture>& Textures, const Map& map,
+                    const sf::Texture& black_texture,
                     sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH])
 {
    // Events that require updating the entire VisibleGrid
    if (input == LEFT_KEY || input == RIGHT_KEY
        || input == UP_KEY || input == DOWN_KEY)
    {
+      if (input == RIGHT_KEY)
+      {
+         translateVisibleGridRight(VisibleGrid, map, Textures, player, black_texture);
+      }
+
       drawVisibleGrid(VisibleGrid, window, player);
    }
 
@@ -57,43 +49,6 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
       else if (input == NUM3_KEY) scale_factor = 3;
       resizeWindow(window, player, scale_factor, VisibleGrid);
    }
-}
-
-// Function: initializeVisibleGrid
-// - initalizes a grid of textures that will be displayed to the window
-// - occurs during hard loading zone (e.g. doors)
-int initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
-                          const std::vector<sf::Texture>& Textures,
-                          const Map& map, const Player& player)
-{
-   // Used to determine which tiles in the map data are visible
-
-   // These 4 variables will be used to index map data
-   // I really don't want to explain it, maybe sometime later
-   int start_X = std::max(player.pos_X - PLAYER_SCREEN_POS_X, 0);
-   int end_X   = std::min((int)map.map_width,
-                          start_X + VISIBLE_WIDTH);
-   int start_Y = std::max(player.pos_Y - PLAYER_SCREEN_POS_Y, 0);
-   int end_Y   = std::min((int)map.map_height,
-                          start_Y + VISIBLE_HEIGHT);
-
-   // Helps translate map coordinates to VisibleGrid coordinates
-   int offset_X = PLAYER_SCREEN_POS_X - player.pos_X;
-   int offset_Y = PLAYER_SCREEN_POS_Y - player.pos_Y;
-
-   // Cut end short so we don't index off grid
-   if (offset_X + end_X - 1 >= VISIBLE_WIDTH) end_X -= offset_X;
-   if (offset_Y + end_Y - 1 >= VISIBLE_HEIGHT) end_Y -= offset_Y;
-
-   for (int y = start_Y; y < end_Y; y++)
-   {
-      for (int x = start_X; x < end_X; x++)
-      {
-         VisibleGrid[y + offset_Y][x + offset_X].setTexture(Textures[map.MapData[y][x]]);
-      }
-   }
-
-   return 0;
 }
 
 // Function: extractTextures
@@ -121,6 +76,18 @@ void extractTextures(std::vector<sf::Texture>& Textures, const Map& map)
 
 int main()
 {
+   // Create a black image, our "missing texture"
+   sf::Image all_black;
+   all_black.create(TILE_WIDTH * getScaleFactor(),
+                    TILE_HEIGHT * getScaleFactor(),
+                    sf::Color::Black);
+
+   sf::Texture black_texture;
+   if(!black_texture.loadFromImage(all_black))
+   {
+      return EXIT_FAILURE;
+   }
+
    // Create grid that will be displayed to the window
    // NOTE: SHOULD ONLY CONTAIN GAME TERRAIN, NOT MENUS
    sf::Sprite VisibleGrid[VISIBLE_HEIGHT][VISIBLE_WIDTH];
@@ -151,8 +118,8 @@ int main()
    }
    player_texture.setSmooth(false);   // Disable smooth filter
    player.player_sprite.setTexture(player_texture);
-   player.pos_X = 5;
-   player.pos_Y = 6;
+   player.pos_X = 4;
+   player.pos_Y = 4;
    player.player_sprite.setScale(scale_factor, scale_factor);
    player.player_sprite.setPosition(PLAYER_SCREEN_POS_X * TILE_WIDTH * scale_factor,
                                     PLAYER_SCREEN_POS_Y * TILE_HEIGHT * scale_factor);
@@ -177,7 +144,8 @@ int main()
          // Check for key presses
          else if (event.type == sf::Event::KeyPressed)
          {
-            handleKeyPress(event.key.code, window, player, VisibleGrid);
+            handleKeyPress(event.key.code, window, player,
+                           Textures, CurrentMap, black_texture, VisibleGrid);
          }
       } // End of event poll
    } // End of game loop

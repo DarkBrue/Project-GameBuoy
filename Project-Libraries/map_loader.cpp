@@ -1,13 +1,13 @@
-// mapLoader.cpp
+// map_loader.cpp
 // Bruce Smith
 // 2024-11-29
 //
-// Source file for mapLoader.h
+// Source file for map_loader.h
 // Handles loading and unloading of map data stored..
 // .. in the JSON format
 
-#include "mapLoader.h"
 #include "constants.h"
+#include "map_loader.h"
 #include <iostream>
 
 // Function: loadMap

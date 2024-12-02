@@ -1,8 +1,8 @@
-// mapLoader.h
+// map_loader.h
 // Bruce Smith
 // 2024-11-29
 //
-// Header for mapLoader.cpp
+// Header for map_loader.cpp
 // Handles loading and unloading of map data stored..
 // .. in the JSON format
 

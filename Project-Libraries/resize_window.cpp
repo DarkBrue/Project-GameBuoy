@@ -5,7 +5,6 @@
 // Source file for resize_window.h
 // Handles request to resize the window
 
-#include <SFML/Graphics.hpp>   // For window/rendering calls
 #include "resize_window.h"
 
 // Function: resizeWindow

@@ -3,6 +3,12 @@
 // 2024-11-28
 //
 // Contains commonly used variables needed by other files
+//
+// NOTE: TILE_WIDTH/HEIGHT & VISIBLE_WIDTH/HEIGHT..
+//       ..& DEFUALT_WINDOW_WIDTH/HEIGHT should be changed in unison.
+//       Such that:
+//       VISIBLE_WIDTH * TILE_WIDTH = DEFAULT_WINDOW_WIDTH
+//       VISIBLE_HEIGHT * TILE_HEIGHT = DEFAULT_WINDOW_HEIGHT
 
 #pragma once
 
@@ -15,6 +21,10 @@ struct Player
    sf::Sprite player_sprite;
    //std::vector<sf::Texture> player_animations (FILL LATER);
 };
+
+// Function: getScaleFactor
+// - gets scale_factor, a constant variable in project_gamebuoy.cpp
+int getScaleFactor();
 
 inline constexpr int VISIBLE_WIDTH = 10;   // 10 tiles wide
 inline constexpr int VISIBLE_HEIGHT = 9;   // 9 tiles tall
