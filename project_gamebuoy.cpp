@@ -124,8 +124,8 @@ int main()
    }
    player_texture.setSmooth(false);   // Disable smooth filter
    player.player_sprite.setTexture(player_texture);
-   player.pos_X = 5;
-   player.pos_Y = 5;
+   player.pos_X = 3;
+   player.pos_Y = 3;
    player.player_sprite.setScale(scale_factor, scale_factor);
    player.player_sprite.setPosition(PLAYER_SCREEN_POS_X * TILE_WIDTH * scale_factor,
                                     PLAYER_SCREEN_POS_Y * TILE_HEIGHT * scale_factor);

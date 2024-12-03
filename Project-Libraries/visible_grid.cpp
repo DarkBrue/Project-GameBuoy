@@ -82,14 +82,23 @@ void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE
    }
 
    // Used to index map
-   int new_column_index = player.pos_X + 6;
+   int map_column_index = player.pos_X + 6;
 
-   // Check if we will index off edge of map
-   if (new_column_index < map.map_width)
+   // Check if we will index off edge of map on the x
+   if (map_column_index < map.map_width && map_column_index > -1)
    {
       for (int y = 0; y < VISIBLE_HEIGHT; y++)
       {
-         VisibleGrid[y][VISIBLE_WIDTH - 1].setTexture(Textures[map.MapData[y][new_column_index]]);
+         // Check if we index off edge of map on the y
+         if (y + player.pos_Y - PLAYER_SCREEN_POS_Y < map.map_height)
+         {
+            VisibleGrid[y][VISIBLE_WIDTH - 1].setTexture(Textures[map.MapData[y + player.pos_Y - PLAYER_SCREEN_POS_Y][map_column_index]]);
+         }
+         // Fill with black textures if no map data
+         else
+         {
+            //VisibleGrid[y][VISIBLE_WIDTH - 1].setTexture(black_texture);
+         }
       }
    }
    // Put in completely black texture if map data doesn't exist
@@ -123,14 +132,23 @@ void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_
    }
 
    // Used to index map
-   int new_column_index = player.pos_X - 5;
+   int map_column_index = player.pos_X - 5;
 
-   // Check if we will index off edge of map
-   if (new_column_index > -1)
+   // Check if we will index off edge of map going left
+   if (map_column_index > -1 && map_column_index < map.map_width)
    {
       for (int y = 0; y < VISIBLE_HEIGHT; y++)
       {
-         VisibleGrid[y][0].setTexture(Textures[map.MapData[y][new_column_index]]);
+         // Check if we index off edge of map on the y
+         if (y + player.pos_Y - PLAYER_SCREEN_POS_Y < map.map_height)
+         {
+            VisibleGrid[y][0].setTexture(Textures[map.MapData[y + player.pos_Y - PLAYER_SCREEN_POS_Y][map_column_index]]);
+         }
+         // Fill with black textures if no map data
+         else
+         {
+            //VisibleGrid[y][0].setTexture(black_texture);
+         }
       }
    }
    // Put in completely black texture if map index doesn't exist
