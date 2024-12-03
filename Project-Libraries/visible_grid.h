@@ -23,14 +23,28 @@ void initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WID
 
 // Function: translateVisibleGridRight()
 // - translates tiles within a sprite to its left neighbor
-// - loads in a new column of tiles on the far right side
+// - loads in a new column of tiles on the far left column
 void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
                                const Map& map, const std::vector<sf::Texture>& Textures,
                                Player& player, const sf::Texture& black_texture);
 
 // Function: translateVisibleGridLeft()
 // - translates tiles within a sprite to its right neighbor
-// - loads in a new column of tiles on the far left side
+// - loads in a new column of tiles on the far left column
 void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                               const Map& map, const std::vector<sf::Texture>& Textures,
+                               Player& player, const sf::Texture& black_texture);
+
+// Function: translateVisibleGridUp()
+// - translates tiles within a sprite to its downward neighbor
+// - loads in a new row of tiles on the top row
+void translateVisibleGridUp(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                               const Map& map, const std::vector<sf::Texture>& Textures,
+                               Player& player, const sf::Texture& black_texture);
+
+// Function: translateVisibleGridDown()
+// - translates tiles within a sprite to its upward neighbor
+// - loads in a new row of tiles on the bottom row
+void translateVisibleGridDown(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
                                const Map& map, const std::vector<sf::Texture>& Textures,
                                Player& player, const sf::Texture& black_texture);

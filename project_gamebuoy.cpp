@@ -40,7 +40,17 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
       else if (input == LEFT_KEY)
       {
          translateVisibleGridLeft(VisibleGrid, map, Textures, player, black_texture);
-         player.pos_X--; // Increment players x-position in the map
+         player.pos_X--; // Decrement players x-position in the map
+      }
+      else if (input == DOWN_KEY)
+      {
+         translateVisibleGridDown(VisibleGrid, map, Textures, player, black_texture);
+         player.pos_Y++; // Increment players y-position in the map
+      }
+      else if (input == UP_KEY)
+      {
+         translateVisibleGridUp(VisibleGrid, map, Textures, player, black_texture);
+         player.pos_Y--; // Decrement players y-position in the map
       }
 
       drawVisibleGrid(VisibleGrid, window, player);

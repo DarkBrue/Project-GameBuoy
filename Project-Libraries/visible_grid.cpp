@@ -82,7 +82,7 @@ void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE
    }
 
    // Used to index map
-   int map_column_index = player.pos_X + 6;
+   int map_column_index = player.pos_X + VISIBLE_WIDTH - PLAYER_SCREEN_POS_X;
 
    // Check if we will index off edge of map on the x
    if (map_column_index < map.map_width && map_column_index > -1)
@@ -93,11 +93,6 @@ void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE
          if (y + player.pos_Y - PLAYER_SCREEN_POS_Y < map.map_height)
          {
             VisibleGrid[y][VISIBLE_WIDTH - 1].setTexture(Textures[map.MapData[y + player.pos_Y - PLAYER_SCREEN_POS_Y][map_column_index]]);
-         }
-         // Fill with black textures if no map data
-         else
-         {
-            //VisibleGrid[y][VISIBLE_WIDTH - 1].setTexture(black_texture);
          }
       }
    }
@@ -132,7 +127,7 @@ void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_
    }
 
    // Used to index map
-   int map_column_index = player.pos_X - 5;
+   int map_column_index = player.pos_X - PLAYER_SCREEN_POS_X - 1;
 
    // Check if we will index off edge of map going left
    if (map_column_index > -1 && map_column_index < map.map_width)
@@ -143,11 +138,6 @@ void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_
          if (y + player.pos_Y - PLAYER_SCREEN_POS_Y < map.map_height)
          {
             VisibleGrid[y][0].setTexture(Textures[map.MapData[y + player.pos_Y - PLAYER_SCREEN_POS_Y][map_column_index]]);
-         }
-         // Fill with black textures if no map data
-         else
-         {
-            //VisibleGrid[y][0].setTexture(black_texture);
          }
       }
    }
@@ -161,3 +151,92 @@ void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_
    }
 }
 
+// Function: translateVisibleGridDown()
+// - translates tiles within a sprite to its upward neighbor
+// - loads in a new row of tiles on the bottom row
+void translateVisibleGridDown(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                               const Map& map, const std::vector<sf::Texture>& Textures,
+                               Player& player, const sf::Texture& black_texture)
+{
+   // Shift current tiles down
+   for (int y = 0; y < VISIBLE_HEIGHT - 1; y++)
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         // Take tile from the bottom
+         VisibleGrid[y][x] = VisibleGrid[y + 1][x];
+         // Update the position
+         VisibleGrid[y][x].setPosition((x * TILE_WIDTH * getScaleFactor()),
+                                        (y * TILE_HEIGHT * getScaleFactor()));
+      }
+   }
+
+   // Used to index map
+   int map_row_index = player.pos_Y + VISIBLE_HEIGHT - PLAYER_SCREEN_POS_Y;
+
+   // Check if we will index off edge of map on the y
+   if (map_row_index < map.map_height && map_row_index > -1)
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         // Check if we index off edge of map on the x
+         if (x + player.pos_X - PLAYER_SCREEN_POS_X < map.map_width)
+         {
+            VisibleGrid[VISIBLE_HEIGHT - 1][x].setTexture(Textures[map.MapData[map_row_index][x + player.pos_X - PLAYER_SCREEN_POS_X]]);
+         }
+      }
+   }
+   // Put in completely black texture if map data doesn't exist
+   else
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         VisibleGrid[VISIBLE_HEIGHT - 1][x].setTexture(black_texture);
+      }
+   }
+}
+
+// Function: translateVisibleGridUp()
+// - translates tiles within a sprite to its downward neighbor
+// - loads in a new row  of tiles on the top row
+void translateVisibleGridUp(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                               const Map& map, const std::vector<sf::Texture>& Textures,
+                               Player& player, const sf::Texture& black_texture)
+{
+   // Shift current tiles up
+   for (int y = VISIBLE_HEIGHT - 1; y > 0; y--)
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         // Take tile from the top
+         VisibleGrid[y][x] = VisibleGrid[y - 1][x];
+         // Update the position
+         VisibleGrid[y][x].setPosition((x * TILE_WIDTH * getScaleFactor()),
+                                        (y * TILE_HEIGHT * getScaleFactor()));
+      }
+   }
+
+   // Used to index map
+   int map_row_index = player.pos_Y - PLAYER_SCREEN_POS_Y - 1;
+
+   // Check if we will index off edge of map on the y
+   if (map_row_index < map.map_height && map_row_index > -1)
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         // Check if we index off edge of map on the x
+         if (x + player.pos_X - PLAYER_SCREEN_POS_X < map.map_width)
+         {
+            VisibleGrid[0][x].setTexture(Textures[map.MapData[map_row_index][x + player.pos_X - PLAYER_SCREEN_POS_X]]);
+         }
+      }
+   }
+   // Put in completely black texture if map data doesn't exist
+   else
+   {
+      for (int x = 0; x < VISIBLE_WIDTH; x++)
+      {
+         VisibleGrid[0][x].setTexture(black_texture);
+      }
+   }
+}
