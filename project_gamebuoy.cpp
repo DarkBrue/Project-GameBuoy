@@ -21,6 +21,53 @@ int getScaleFactor()
    return scale_factor;
 }
 
+// Function: checkCollision
+// - checks if the direction the player wants to go has collision
+// - returns true if there is collision, false otherwise
+bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
+{
+   // Check what movement and if we won't index off map
+   if (input == RIGHT_KEY && player.pos_X + 1 < map.map_width)
+   {
+      // Check if collision exists for that tile type, > 0 means collision
+      if (map.CollisionData[map.MapData[player.pos_Y][player.pos_X + 1]])
+      {
+         return true;
+      }
+   }
+   else if (input == LEFT_KEY && player.pos_X - 1 > -1)
+   {
+      // Check if collision exists for that tile type, > 0 means collision
+      if (map.CollisionData[map.MapData[player.pos_Y][player.pos_X - 1]])
+      {
+         return true;
+      }
+   }
+   else if (input == UP_KEY && player.pos_Y - 1 > -1)
+   {
+      // Check if collision exists for that tile type, > 0 means collision
+      if (map.CollisionData[map.MapData[player.pos_Y - 1][player.pos_X]])
+      {
+         return true;
+      }
+   }
+   else if (input == DOWN_KEY && player.pos_Y + 1 < map.map_height)
+   {
+      // Check if collision exists for that tile type, > 0 means collision
+      if (map.CollisionData[map.MapData[player.pos_Y + 1][player.pos_X]])
+      {
+         return true;
+      }
+   }
+   // Make sure player doesn't walk out of bounds
+   else if (0 < player.pos_X < map.map_width &&
+            0 < player.pos_Y < map.map_height)
+   {
+      return true;
+   }
+   return false; // No collision
+}
+
 // Function: handleKeyPress
 // - handles event where key is pressed (generally user input)
 void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& player,
@@ -32,29 +79,32 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
    if (input == LEFT_KEY || input == RIGHT_KEY
        || input == UP_KEY || input == DOWN_KEY)
    {
-      if (input == RIGHT_KEY)
+      if (!checkCollision(input, player, map))
       {
-         translateVisibleGridRight(VisibleGrid, map, Textures, player, black_texture);
-         player.pos_X++; // Increment players x-position in the map
-      }
-      else if (input == LEFT_KEY)
-      {
-         translateVisibleGridLeft(VisibleGrid, map, Textures, player, black_texture);
-         player.pos_X--; // Decrement players x-position in the map
-      }
-      else if (input == DOWN_KEY)
-      {
-         translateVisibleGridDown(VisibleGrid, map, Textures, player, black_texture);
-         player.pos_Y++; // Increment players y-position in the map
-      }
-      else if (input == UP_KEY)
-      {
-         translateVisibleGridUp(VisibleGrid, map, Textures, player, black_texture);
-         player.pos_Y--; // Decrement players y-position in the map
-      }
+         if (input == RIGHT_KEY)
+         {
+            translateVisibleGridRight(VisibleGrid, map, Textures, player, black_texture);
+            player.pos_X++; // Increment players x-position in the map
+         }
+         else if (input == LEFT_KEY)
+         {
+            translateVisibleGridLeft(VisibleGrid, map, Textures, player, black_texture);
+            player.pos_X--; // Decrement players x-position in the map
+         }
+         else if (input == DOWN_KEY)
+         {
+            translateVisibleGridDown(VisibleGrid, map, Textures, player, black_texture);
+            player.pos_Y++; // Increment players y-position in the map
+         }
+         else if (input == UP_KEY)
+         {
+            translateVisibleGridUp(VisibleGrid, map, Textures, player, black_texture);
+            player.pos_Y--; // Decrement players y-position in the map
+         }
 
-      drawVisibleGrid(VisibleGrid, window, player);
-   }
+         drawVisibleGrid(VisibleGrid, window, player);
+      } // Done checking movement keys
+   }// Done checking for collision
 
    // Events that require resizing the screen
    else if (input == NUM1_KEY || input == NUM2_KEY || input == NUM3_KEY)
@@ -134,8 +184,8 @@ int main()
    }
    player_texture.setSmooth(false);   // Disable smooth filter
    player.player_sprite.setTexture(player_texture);
-   player.pos_X = 3;
-   player.pos_Y = 3;
+   player.pos_X = 1;
+   player.pos_Y = 8;
    player.player_sprite.setScale(scale_factor, scale_factor);
    player.player_sprite.setPosition(PLAYER_SCREEN_POS_X * TILE_WIDTH * scale_factor,
                                     PLAYER_SCREEN_POS_Y * TILE_HEIGHT * scale_factor);

@@ -21,6 +21,7 @@ struct Map {
    unsigned int map_width; // Store map width in tiles
    unsigned int map_height; // Store map width in tiles
    std::vector<std::vector<int>> MapData; // Matrix for storing tile data
+   std::vector<int> CollisionData; // Array for storing collision data
 };
 
 Map loadMap(const std::string& filename);

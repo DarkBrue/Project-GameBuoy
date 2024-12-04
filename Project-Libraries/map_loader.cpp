@@ -41,6 +41,8 @@ Map loadMap(const std::string& filename)
    map.map_width = parsed["map_width"];
    map.map_height = parsed["map_height"];
 
+   map.CollisionData = parsed["CollisionData"].get<std::vector<int>>();
+
    sf::Vector2u size = map.texture_atlas.getSize();
    map.texture_atlas_width = size.x / TILE_WIDTH;
    map.texture_atlas_height = size.y / TILE_HEIGHT;
@@ -56,4 +58,5 @@ void unloadMap(Map& map)
    map.MapData.clear();
    map.texture_atlas_width = 0;
    map.texture_atlas_height = 0;
+   map.CollisionData.clear();
 }
