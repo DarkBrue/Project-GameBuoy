@@ -13,6 +13,18 @@
 #include "Project-Libraries/constants.h"   // Access to commonly used variables
 #include "Project-Libraries/visible_grid.h" // For VisibleGrid functions
 
+// Checks if west map is loaded
+bool is_west_map_loaded = false;
+
+// Checks if east map is loaded
+bool is_east_map_loaded = false;
+
+// Checks if north map is loaded
+bool is_north_map_loaded = false;
+
+// Checks if south map is loaded
+bool is_south_map_loaded = false;
+
 // Don't touch this variable unless you know what you are doing
 // Used to scale window and sprites
 int scale_factor = 2;
@@ -79,27 +91,80 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
    if (input == LEFT_KEY || input == RIGHT_KEY
        || input == UP_KEY || input == DOWN_KEY)
    {
+      // Check if movement in that direction is valid based on collisions
       if (!checkCollision(input, player, map))
       {
          if (input == RIGHT_KEY)
          {
             translateVisibleGridRight(VisibleGrid, map, Textures, player, black_texture);
             player.pos_X++; // Increment players x-position in the map
+
+            // Check if player is close enough to load adjacent map
+            if (player.pos_X > map.map_width - TILES_TO_LOAD - 2 &&
+                !is_east_map_loaded)
+            {
+               is_east_map_loaded = true;
+               std::cout<<"Loading eastern map"<<std::endl;
+            }
+            if (player.pos_X > TILES_TO_LOAD - 1 && is_west_map_loaded)
+            {
+               is_west_map_loaded = false;
+               std::cout<<"Unloading western map"<<std::endl;
+            }
          }
          else if (input == LEFT_KEY)
          {
             translateVisibleGridLeft(VisibleGrid, map, Textures, player, black_texture);
             player.pos_X--; // Decrement players x-position in the map
+
+            // Check if player is close enough to load adjacent map
+            if (player.pos_X < TILES_TO_LOAD && !is_west_map_loaded)
+            {
+               is_west_map_loaded = true;
+               std::cout<<"Loading western map"<<std::endl;
+            }
+            if (player.pos_X < map.map_width - TILES_TO_LOAD - 1
+                     && is_east_map_loaded)
+            {
+               is_east_map_loaded = false;
+               std::cout<<"Unloading eastern map"<<std::endl;
+            }
          }
          else if (input == DOWN_KEY)
          {
             translateVisibleGridDown(VisibleGrid, map, Textures, player, black_texture);
             player.pos_Y++; // Increment players y-position in the map
+
+            // Check if player is close enough to load adjacent map
+            if (player.pos_Y > map.map_height - TILES_TO_LOAD - 1
+                && !is_south_map_loaded)
+            {
+               is_south_map_loaded = true;
+               std::cout<<"Loading southern map"<<std::endl;
+            }
+            if (player.pos_Y > TILES_TO_LOAD - 1 && is_north_map_loaded)
+            {
+               is_north_map_loaded = false;
+               std::cout<<"Unloading northern map"<<std::endl;
+            }
          }
          else if (input == UP_KEY)
          {
             translateVisibleGridUp(VisibleGrid, map, Textures, player, black_texture);
             player.pos_Y--; // Decrement players y-position in the map
+
+            // Check if player is close enough to load adjacent map
+            if (player.pos_Y < TILES_TO_LOAD && !is_north_map_loaded)
+            {
+               is_north_map_loaded = true;
+               std::cout<<"Loading northern map"<<std::endl;
+            }
+            if (player.pos_Y < map.map_height - TILES_TO_LOAD
+                     && is_south_map_loaded)
+            {
+               is_south_map_loaded = false;
+               std::cout<<"Unloading southern map"<<std::endl;
+            }
          }
 
          drawVisibleGrid(VisibleGrid, window, player);
@@ -184,7 +249,7 @@ int main()
    }
    player_texture.setSmooth(false);   // Disable smooth filter
    player.player_sprite.setTexture(player_texture);
-   player.pos_X = 1;
+   player.pos_X = 6;
    player.pos_Y = 8;
    player.player_sprite.setScale(scale_factor, scale_factor);
    player.player_sprite.setPosition(PLAYER_SCREEN_POS_X * TILE_WIDTH * scale_factor,

@@ -56,6 +56,7 @@ void unloadMap(Map& map)
 {
    map.texture_atlas = sf::Texture();
    map.MapData.clear();
+   map.CollisionData.clear();
    map.texture_atlas_width = 0;
    map.texture_atlas_height = 0;
    map.CollisionData.clear();

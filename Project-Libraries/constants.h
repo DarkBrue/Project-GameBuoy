@@ -37,8 +37,12 @@ inline constexpr int PLAYER_SCREEN_POS_Y = 4;
 inline constexpr int DEFAULT_WINDOW_WIDTH = 160;   // 160 pixels wide
 inline constexpr int DEFAULT_WINDOW_HEIGHT = 144;   // 144 pixels tall
 
-inline constexpr int TILE_WIDTH = 16;   // Defualt tile width
+inline constexpr int TILE_WIDTH = 16;   // Default tile width
 inline constexpr int TILE_HEIGHT = 16;   // Defualt tile height
+
+// How many tiles from the map boarder the player needs to be to..
+// ..start loading in the adjacent map
+inline constexpr int TILES_TO_LOAD = 5;
 
 // Create shorthand variables for valid key input
 inline constexpr sf::Keyboard::Key UP_KEY    = sf::Keyboard::Up;
