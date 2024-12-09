@@ -82,7 +82,8 @@ void translateVisibleGridRight(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE
    }
 
    // Used to index map
-   int map_column_index = player.pos_X + VISIBLE_WIDTH - PLAYER_SCREEN_POS_X;
+   int map_column_index = (player.pos_X - 1) + VISIBLE_WIDTH
+                          - PLAYER_SCREEN_POS_X;
 
    // Check if we will index off edge of map on the x
    if (map_column_index < map.map_width && map_column_index > -1)
@@ -127,7 +128,7 @@ void translateVisibleGridLeft(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_
    }
 
    // Used to index map
-   int map_column_index = player.pos_X - PLAYER_SCREEN_POS_X - 1;
+   int map_column_index = player.pos_X - PLAYER_SCREEN_POS_X;
 
    // Check if we will index off edge of map going left
    if (map_column_index > -1 && map_column_index < map.map_width)
@@ -172,7 +173,7 @@ void translateVisibleGridDown(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_
    }
 
    // Used to index map
-   int map_row_index = player.pos_Y + VISIBLE_HEIGHT - PLAYER_SCREEN_POS_Y;
+   int map_row_index = (player.pos_Y - 1) + VISIBLE_HEIGHT - PLAYER_SCREEN_POS_Y;
 
    // Check if we will index off edge of map on the y
    if (map_row_index < map.map_height && map_row_index > -1)
@@ -217,7 +218,7 @@ void translateVisibleGridUp(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WI
    }
 
    // Used to index map
-   int map_row_index = player.pos_Y - PLAYER_SCREEN_POS_Y - 1;
+   int map_row_index = player.pos_Y - PLAYER_SCREEN_POS_Y;
 
    // Check if we will index off edge of map on the y
    if (map_row_index < map.map_height && map_row_index > -1)

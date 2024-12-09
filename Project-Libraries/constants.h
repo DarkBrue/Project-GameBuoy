@@ -42,7 +42,7 @@ inline constexpr int TILE_HEIGHT = 16;   // Defualt tile height
 
 // How many tiles from the map boarder the player needs to be to..
 // ..start loading in the adjacent map
-inline constexpr int TILES_TO_LOAD = 5;
+inline constexpr int TILES_TO_LOAD = 4;
 
 // Create shorthand variables for valid key input
 inline constexpr sf::Keyboard::Key UP_KEY    = sf::Keyboard::Up;

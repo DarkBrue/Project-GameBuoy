@@ -15,6 +15,12 @@
 // - will return data in form of Map (check mapLoader.h for details)
 Map loadMap(const std::string& filename)
 {
+   if (filename == "NA" || filename == "")
+   {
+      std::cerr << "Tried loading non-existant map" << std::endl;
+      return {}; // Return empty map
+   }
+
    std::ifstream file(filename);
    if (!file.is_open())
    {
@@ -43,6 +49,11 @@ Map loadMap(const std::string& filename)
 
    map.CollisionData = parsed["CollisionData"].get<std::vector<int>>();
 
+   map.north_map_source = parsed["north_map_source"];
+   map.east_map_source = parsed["east_map_source"];
+   map.west_map_source = parsed["west_map_source"];
+   map.south_map_source = parsed["south_map_source"];
+
    sf::Vector2u size = map.texture_atlas.getSize();
    map.texture_atlas_width = size.x / TILE_WIDTH;
    map.texture_atlas_height = size.y / TILE_HEIGHT;
@@ -60,4 +71,8 @@ void unloadMap(Map& map)
    map.texture_atlas_width = 0;
    map.texture_atlas_height = 0;
    map.CollisionData.clear();
+   map.north_map_source = "";
+   map.east_map_source = "";
+   map.west_map_source = "";
+   map.south_map_source = "";
 }

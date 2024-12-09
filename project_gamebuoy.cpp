@@ -7,23 +7,24 @@
 
 #include <iostream> // For IO debugging
 #include <SFML/Graphics.hpp>   // For window/rendering calls
-#include <vector>   // For vector
+#include <vector>   // For std::vector
+#include <utility>   // For std::swap
 #include "Project-Libraries/resize_window.h"   // Handles resizing screen
 #include "Project-Libraries/map_loader.h"   // Handles loading and unloading map data
 #include "Project-Libraries/constants.h"   // Access to commonly used variables
 #include "Project-Libraries/visible_grid.h" // For VisibleGrid functions
 
-// Checks if west map is loaded
-bool is_west_map_loaded = false;
+// Checks if we loaded map from east of new map
+bool map_loaded_from_east = false;
+// Checks if we loaded map from west of new map
+bool map_loaded_from_west = false;
+// Checks if we loaded map from south of new map
+bool map_loaded_from_south = false;
+// Checks if we loaded map from north of new map
+bool map_loaded_from_north = false;
 
-// Checks if east map is loaded
-bool is_east_map_loaded = false;
-
-// Checks if north map is loaded
-bool is_north_map_loaded = false;
-
-// Checks if south map is loaded
-bool is_south_map_loaded = false;
+// Checks if a map is currently loaded
+bool is_map_loaded = false;
 
 // Don't touch this variable unless you know what you are doing
 // Used to scale window and sprites
@@ -38,8 +39,7 @@ int getScaleFactor()
 // - returns true if there is collision, false otherwise
 bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
 {
-   // Check what movement and if we won't index off map
-   if (input == RIGHT_KEY && player.pos_X + 1 < map.map_width)
+   if (input == RIGHT_KEY)
    {
       // Check if collision exists for that tile type, > 0 means collision
       if (map.CollisionData[map.MapData[player.pos_Y][player.pos_X + 1]])
@@ -47,7 +47,7 @@ bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
          return true;
       }
    }
-   else if (input == LEFT_KEY && player.pos_X - 1 > -1)
+   else if (input == LEFT_KEY)
    {
       // Check if collision exists for that tile type, > 0 means collision
       if (map.CollisionData[map.MapData[player.pos_Y][player.pos_X - 1]])
@@ -55,7 +55,7 @@ bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
          return true;
       }
    }
-   else if (input == UP_KEY && player.pos_Y - 1 > -1)
+   else if (input == UP_KEY)
    {
       // Check if collision exists for that tile type, > 0 means collision
       if (map.CollisionData[map.MapData[player.pos_Y - 1][player.pos_X]])
@@ -63,7 +63,7 @@ bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
          return true;
       }
    }
-   else if (input == DOWN_KEY && player.pos_Y + 1 < map.map_height)
+   else if (input == DOWN_KEY)
    {
       // Check if collision exists for that tile type, > 0 means collision
       if (map.CollisionData[map.MapData[player.pos_Y + 1][player.pos_X]])
@@ -72,19 +72,19 @@ bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
       }
    }
    // Make sure player doesn't walk out of bounds
-   else if (0 < player.pos_X < map.map_width &&
-            0 < player.pos_Y < map.map_height)
-   {
-      return true;
-   }
+   //else if (0 < player.pos_X < map.map_width &&
+   //         0 < player.pos_Y < map.map_height)
+   //{
+   //   return true;
+   //}
    return false; // No collision
 }
 
 // Function: handleKeyPress
 // - handles event where key is pressed (generally user input)
 void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& player,
-                    const std::vector<sf::Texture>& Textures, const Map& map,
-                    const sf::Texture& black_texture,
+                    const std::vector<sf::Texture>& Textures, Map& CurrentMap,
+                    Map& AdjacentMap, const sf::Texture& black_texture,
                     sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH])
 {
    // Events that require updating the entire VisibleGrid
@@ -92,81 +92,163 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
        || input == UP_KEY || input == DOWN_KEY)
    {
       // Check if movement in that direction is valid based on collisions
-      if (!checkCollision(input, player, map))
+      if (!checkCollision(input, player, CurrentMap))
       {
          if (input == RIGHT_KEY)
          {
-            translateVisibleGridRight(VisibleGrid, map, Textures, player, black_texture);
-            player.pos_X++; // Increment players x-position in the map
+            // Increment players x-position in the map, we do this first..
+            // ..to figure out what needs to be done where the player goes
+            player.pos_X++;
 
             // Check if player is close enough to load adjacent map
-            if (player.pos_X > map.map_width - TILES_TO_LOAD - 2 &&
-                !is_east_map_loaded)
+            if (player.pos_X == CurrentMap.map_width - (TILES_TO_LOAD + 1)
+                && !is_map_loaded && CurrentMap.east_map_source != "NA")
             {
-               is_east_map_loaded = true;
-               std::cout<<"Loading eastern map"<<std::endl;
+               std::cout<<"Loading map"<<std::endl;
+               is_map_loaded = true;
+               map_loaded_from_west = true;
+
+               AdjacentMap = loadMap(CurrentMap.east_map_source);
+               std::swap(CurrentMap, AdjacentMap);
+               player.pos_X = 0;
+               // FIGURE OUT PLAYER Y POS
             }
-            if (player.pos_X > TILES_TO_LOAD - 1 && is_west_map_loaded)
+            // Occurs if player turns back to old map during map transition
+            if (player.pos_X > (CurrentMap.map_width - TILES_TO_LOAD) - 2
+                && map_loaded_from_east)
             {
-               is_west_map_loaded = false;
-               std::cout<<"Unloading western map"<<std::endl;
+               // Store how far player was sitting in transition boundary
+               int distance_from_border = CurrentMap.map_width - player.pos_X;
+               std::swap(CurrentMap, AdjacentMap);
+               player.pos_X = TILES_TO_LOAD - distance_from_border + 1;
+               map_loaded_from_east = false;
+               map_loaded_from_west = true;
             }
+            // Unload map if far enough from border
+            if (player.pos_X > TILES_TO_LOAD - 1 && map_loaded_from_west)
+            {
+               std::cout<<"Unloading map"<<std::endl;
+               is_map_loaded = false;
+               map_loaded_from_west = false;
+               // Clear adjacent map?
+            }
+            translateVisibleGridRight(VisibleGrid, CurrentMap, Textures,
+                                      player, black_texture);
          }
+
+
          else if (input == LEFT_KEY)
          {
-            translateVisibleGridLeft(VisibleGrid, map, Textures, player, black_texture);
-            player.pos_X--; // Decrement players x-position in the map
+            // Decrement players x-position in the map, we do this first..
+            // ..to figure out what needs to be done where the player goes
+            player.pos_X--;
 
             // Check if player is close enough to load adjacent map
-            if (player.pos_X < TILES_TO_LOAD && !is_west_map_loaded)
+            if (player.pos_X == TILES_TO_LOAD - 1 && !is_map_loaded)
             {
-               is_west_map_loaded = true;
-               std::cout<<"Loading western map"<<std::endl;
+               // If this fails, player got too close to border on accident
+               if (CurrentMap.west_map_source != "NA")
+               {
+                  std::cout<<"Loading map"<<std::endl;
+                  is_map_loaded = true;
+                  map_loaded_from_east = true;
+
+                  AdjacentMap = loadMap(CurrentMap.west_map_source);
+                  std::swap(CurrentMap, AdjacentMap);
+                  player.pos_X = CurrentMap.map_width - 2;
+                  // FIGURE OUT PLAYER Y POS
+               }
             }
-            if (player.pos_X < map.map_width - TILES_TO_LOAD - 1
-                     && is_east_map_loaded)
+            // Occurs if player turns back to old map during map transition
+            if (player.pos_X < TILES_TO_LOAD && map_loaded_from_west)
             {
-               is_east_map_loaded = false;
-               std::cout<<"Unloading eastern map"<<std::endl;
+               int distance_from_border = player.pos_X - 1;
+               std::swap(CurrentMap, AdjacentMap);
+               player.pos_X = (CurrentMap.map_width - TILES_TO_LOAD)
+                               + distance_from_border;
+               map_loaded_from_west = false;
+               map_loaded_from_east = true;
             }
+            // Unload map if far away from border
+            if (player.pos_X < (CurrentMap.map_width - TILES_TO_LOAD) - 1
+                && map_loaded_from_east)
+            {
+               std::cout<<"Unloading map"<<std::endl;
+               is_map_loaded = false;
+               map_loaded_from_east = false;
+               // Clear adjacent map?
+            }
+            translateVisibleGridLeft(VisibleGrid, CurrentMap, Textures, player,
+                                     black_texture);
          }
+
+
          else if (input == DOWN_KEY)
          {
-            translateVisibleGridDown(VisibleGrid, map, Textures, player, black_texture);
-            player.pos_Y++; // Increment players y-position in the map
+            // Increment players y-position in the map, we do this first..
+            // ..to figure out what needs to be done where the player goes
+            player.pos_Y++;
 
             // Check if player is close enough to load adjacent map
-            if (player.pos_Y > map.map_height - TILES_TO_LOAD - 1
-                && !is_south_map_loaded)
+            if (player.pos_Y == CurrentMap.map_height - TILES_TO_LOAD
+                && !is_map_loaded)
             {
-               is_south_map_loaded = true;
-               std::cout<<"Loading southern map"<<std::endl;
+               // If this fails, player got too close to border on accident
+               if (CurrentMap.south_map_source != "NA")
+               {
+                  std::cout<<"Loading map"<<std::endl;
+                  is_map_loaded = true;
+                  map_loaded_from_north = true;
+
+                  AdjacentMap = loadMap(CurrentMap.west_map_source);
+                  std::swap(CurrentMap, AdjacentMap);
+                  player.pos_Y = 0;
+                  // FIGURE OUT PLAYER X POS
+               }
+
             }
-            if (player.pos_Y > TILES_TO_LOAD - 1 && is_north_map_loaded)
-            {
-               is_north_map_loaded = false;
-               std::cout<<"Unloading northern map"<<std::endl;
-            }
+            //if (player.pos_Y > TILES_TO_LOAD - 1 && is_north_map_loaded)
+            //{
+            //   is_north_map_loaded = false;
+            //   std::cout<<"Unloading map"<<std::endl;
+            //}
+            translateVisibleGridDown(VisibleGrid, CurrentMap, Textures,
+                                     player, black_texture);
          }
+
+
          else if (input == UP_KEY)
          {
-            translateVisibleGridUp(VisibleGrid, map, Textures, player, black_texture);
-            player.pos_Y--; // Decrement players y-position in the map
+            // Decrement players y-position in the map, we do this first..
+            // ..to figure out what needs to be done where the player goes
+            player.pos_Y--;
 
             // Check if player is close enough to load adjacent map
-            if (player.pos_Y < TILES_TO_LOAD && !is_north_map_loaded)
+            if (player.pos_Y == TILES_TO_LOAD - 1 && !is_map_loaded)
             {
-               is_north_map_loaded = true;
-               std::cout<<"Loading northern map"<<std::endl;
-            }
-            if (player.pos_Y < map.map_height - TILES_TO_LOAD
-                     && is_south_map_loaded)
-            {
-               is_south_map_loaded = false;
-               std::cout<<"Unloading southern map"<<std::endl;
-            }
-         }
+               // If this fails, player got too close to border on accident
+               if (CurrentMap.north_map_source != "NA")
+               {
+                  std::cout<<"Loading map"<<std::endl;
+                  is_map_loaded = true;
+                  map_loaded_from_south = true;
 
+                  AdjacentMap = loadMap(CurrentMap.west_map_source);
+                  std::swap(CurrentMap, AdjacentMap);
+                  player.pos_Y = CurrentMap.map_height - 1;
+                  // FIGURE OUT PLAYER X POS
+               }
+            }
+            //if (player.pos_Y < CurrentMap.map_height - TILES_TO_LOAD
+            //         && is_south_map_loaded)
+            //{
+            //   is_south_map_loaded = false;
+            //   std::cout<<"Unloading map"<<std::endl;
+            //}
+            translateVisibleGridUp(VisibleGrid, CurrentMap, Textures, player,
+                                   black_texture);
+         }
+         std::cout<<"Player pos x: "<<player.pos_X<<std::endl;
          drawVisibleGrid(VisibleGrid, window, player);
       } // Done checking movement keys
    }// Done checking for collision
@@ -235,6 +317,7 @@ int main()
    }
 
    Map CurrentMap = loadMap("Map-Data/map_02.json");
+   Map AdjacentMap; // Will load adjacent maps to CurrentMap here
 
    // Will store textures from a texture atlas associated to map data
    std::vector<sf::Texture> Textures;
@@ -275,8 +358,8 @@ int main()
          // Check for key presses
          else if (event.type == sf::Event::KeyPressed)
          {
-            handleKeyPress(event.key.code, window, player,
-                           Textures, CurrentMap, black_texture, VisibleGrid);
+            handleKeyPress(event.key.code, window, player, Textures,
+                           CurrentMap, AdjacentMap, black_texture, VisibleGrid);
          }
       } // End of event poll
    } // End of game loop
