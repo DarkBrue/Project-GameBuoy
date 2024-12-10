@@ -18,11 +18,15 @@
       [ 2, 2, 2, 2, 2, 0, 3, 0, 1, 1, 1, 3, 2, 2, 2, 3, 1],
       [ 2, 2, 2, 2, 2, 0, 3, 0, 1, 1, 1, 3, 2, 2, 2, 3, 1],
       [ 2, 2, 2, 2, 2, 0, 3, 0, 1, 1, 1, 3, 3, 3, 3, 3, 1],
-      [ 2, 2, 2, 2, 2, 0, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+      [ 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]
    ],
    "CollisionData": [0, 1, 1, 0],
-   "north_map_source": "NA",
+   "north_map_source": "Map-Data/map_05.json",
+   "north_x_entrance": 5,
    "west_map_source": "Map-Data/map_03.json",
+   "west_y_entrance": 7,
    "east_map_source": "NA",
-   "south_map_source": "NA"
+   "east_y_entrance": 0,
+   "south_map_source": "NA",
+   "south_x_entrance": 0
 }

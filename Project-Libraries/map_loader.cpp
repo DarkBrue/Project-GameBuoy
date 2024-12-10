@@ -54,6 +54,11 @@ Map loadMap(const std::string& filename)
    map.west_map_source = parsed["west_map_source"];
    map.south_map_source = parsed["south_map_source"];
 
+   map.north_x_entrance = parsed["north_x_entrance"];
+   map.west_y_entrance = parsed["west_y_entrance"];
+   map.east_y_entrance = parsed["east_y_entrance"];
+   map.south_x_entrance = parsed["south_x_entrance"];
+
    sf::Vector2u size = map.texture_atlas.getSize();
    map.texture_atlas_width = size.x / TILE_WIDTH;
    map.texture_atlas_height = size.y / TILE_HEIGHT;
@@ -71,8 +76,12 @@ void unloadMap(Map& map)
    map.texture_atlas_width = 0;
    map.texture_atlas_height = 0;
    map.CollisionData.clear();
-   map.north_map_source = "";
-   map.east_map_source = "";
-   map.west_map_source = "";
-   map.south_map_source = "";
+   map.north_map_source = "NA";
+   map.east_map_source = "NA";
+   map.west_map_source = "NA";
+   map.south_map_source = "NA";
+   map.north_x_entrance = 0;
+   map.west_y_entrance = 0;
+   map.east_y_entrance = 0;
+   map.south_x_entrance = 0;
 }

@@ -26,6 +26,10 @@ struct Map {
    std::string west_map_source;
    std::string east_map_source;
    std::string south_map_source;
+   int north_x_entrance; // Store start of north entrance on the x
+   int west_y_entrance; // Store start of west entrance on the y
+   int east_y_entrance;
+   int south_x_entrance;
 };
 
 Map loadMap(const std::string& filename);
