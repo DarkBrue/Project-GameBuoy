@@ -34,6 +34,30 @@ int getScaleFactor()
    return scale_factor;
 }
 
+// Function: extractTextures
+// - extracts textures from texture atlas associated with a map
+void extractTextures(std::vector<sf::Texture>& Textures, const Map& map)
+{
+   Textures.clear();
+   for (int y = 0; y < map.texture_atlas_height; y++)
+   {
+      for (int x = 0; x < map.texture_atlas_width; x++)
+      {
+         // Create a cookie cutter
+         sf::IntRect SubRect(x * TILE_WIDTH, y * TILE_HEIGHT,
+                                 TILE_WIDTH, TILE_HEIGHT);
+
+         sf::Texture sub_texture;
+
+         // Cookie cut textures from atlas
+         if (sub_texture.loadFromImage(map.texture_atlas.copyToImage(), SubRect))
+         {
+            Textures.push_back(std::move(sub_texture));
+         }
+      }
+   }
+}
+
 // Function: checkCollision
 // - checks if the direction the player wants to go has collision
 // - returns true if there is collision, false otherwise
@@ -77,8 +101,9 @@ bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
 // Function: handleKeyPress
 // - handles event where key is pressed (generally user input)
 void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& player,
-                    const std::vector<sf::Texture>& Textures, Map& CurrentMap,
-                    Map& AdjacentMap, const sf::Texture& black_texture,
+                    std::vector<sf::Texture>& Textures,
+                    std::vector<sf::Texture>& AdjacentTextures,
+                    Map& CurrentMap, Map& AdjacentMap, const sf::Texture& black_texture,
                     sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH])
 {
    // Events that require updating the entire VisibleGrid
@@ -105,7 +130,10 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int y_entrance_offset = player.pos_Y - CurrentMap.east_y_entrance;
 
                AdjacentMap = loadMap(CurrentMap.east_map_source);
+               extractTextures(AdjacentTextures, AdjacentMap);
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
+
                player.pos_X = 0;
                player.pos_Y = CurrentMap.west_y_entrance + y_entrance_offset;
             }
@@ -118,6 +146,7 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int y_entrance_offset = player.pos_Y - CurrentMap.east_y_entrance;
 
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
 
                player.pos_X = TILES_TO_LOAD - distance_from_border + 1;
                player.pos_Y = CurrentMap.west_y_entrance + y_entrance_offset;
@@ -153,7 +182,9 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int y_entrance_offset = player.pos_Y - CurrentMap.west_y_entrance;
 
                AdjacentMap = loadMap(CurrentMap.west_map_source);
+               extractTextures(AdjacentTextures, AdjacentMap);
                std::swap(CurrentMap, AdjacentMap);
+
                player.pos_X = CurrentMap.map_width - 2;
                player.pos_Y = CurrentMap.east_y_entrance + y_entrance_offset;
             }
@@ -165,6 +196,7 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int y_entrance_offset = player.pos_Y - CurrentMap.west_y_entrance;
 
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
 
                player.pos_X = (CurrentMap.map_width - TILES_TO_LOAD)
                                + distance_from_border;
@@ -202,7 +234,10 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int x_entrance_offset = player.pos_X - CurrentMap.south_x_entrance;
 
                AdjacentMap = loadMap(CurrentMap.south_map_source);
+               extractTextures(AdjacentTextures, AdjacentMap);
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
+
                player.pos_X = CurrentMap.north_x_entrance + x_entrance_offset;
                player.pos_Y = 0;
             }
@@ -215,6 +250,7 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int x_entrance_offset = player.pos_X - CurrentMap.south_x_entrance;
 
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
 
                player.pos_X = CurrentMap.north_x_entrance + x_entrance_offset;
                player.pos_Y = TILES_TO_LOAD - distance_from_border;
@@ -239,7 +275,6 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
             // Decrement players y-position in the map, we do this first..
             // ..to figure out what needs to be done where the player goes
             player.pos_Y--;
-
             // Check if player is close enough to load adjacent map
             if (player.pos_Y == TILES_TO_LOAD - 1 && !is_map_loaded
                 && CurrentMap.north_map_source != "NA")
@@ -250,7 +285,10 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int x_entrance_offset = player.pos_X - CurrentMap.north_x_entrance;
 
                AdjacentMap = loadMap(CurrentMap.north_map_source);
+               extractTextures(AdjacentTextures, AdjacentMap);
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
+
                player.pos_X = CurrentMap.south_x_entrance + x_entrance_offset;
                player.pos_Y = CurrentMap.map_height - 1;
             }
@@ -262,6 +300,7 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                int x_entrance_offset = player.pos_X - CurrentMap.north_x_entrance;
 
                std::swap(CurrentMap, AdjacentMap);
+               std::swap(Textures, AdjacentTextures);
 
                player.pos_X = CurrentMap.south_x_entrance + x_entrance_offset;
                player.pos_Y = (CurrentMap.map_height - TILES_TO_LOAD)
@@ -278,8 +317,8 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
                map_loaded_from_south = false;
                unloadMap(AdjacentMap);
             }
-            translateVisibleGridUp(VisibleGrid, CurrentMap, Textures, player,
-                                   black_texture);
+            translateVisibleGridUp(VisibleGrid, CurrentMap, Textures,
+                                   player, black_texture);
          }
          drawVisibleGrid(VisibleGrid, window, player);
       } // Done checking movement keys
@@ -296,28 +335,6 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
    }
 }
 
-// Function: extractTextures
-// - extracts textures from texture atlas associated with a map
-void extractTextures(std::vector<sf::Texture>& Textures, const Map& map)
-{
-   for (int y = 0; y < map.texture_atlas_height; y++)
-   {
-      for (int x = 0; x < map.texture_atlas_width; x++)
-      {
-         // Create a cookie cutter
-         sf::IntRect SubRect(x * TILE_WIDTH, y * TILE_HEIGHT,
-                                 TILE_WIDTH, TILE_HEIGHT);
-
-         sf::Texture sub_texture;
-
-         // Cookie cut textures from atlas
-         if (sub_texture.loadFromImage(map.texture_atlas.copyToImage(), SubRect))
-         {
-            Textures.push_back(std::move(sub_texture));
-         }
-      }
-   }
-}
 
 int main()
 {
@@ -353,6 +370,8 @@ int main()
 
    // Will store textures from a texture atlas associated to map data
    std::vector<sf::Texture> Textures;
+   // Will store textures from a texture atlas of a loaded adjacent map
+   std::vector<sf::Texture> AdjacentTextures;
 
    extractTextures(Textures, CurrentMap);
 
@@ -371,7 +390,8 @@ int main()
                                     PLAYER_SCREEN_POS_Y * TILE_HEIGHT * scale_factor);
 
    // Set up grid of viewable tiles
-   initializeVisibleGrid(VisibleGrid, Textures, CurrentMap, player);
+   initializeVisibleGrid(VisibleGrid, Textures, AdjacentTextures,
+                         CurrentMap, player);
 
    // Create main window
    sf::RenderWindow window(sf::VideoMode(DEFAULT_WINDOW_WIDTH * scale_factor,
@@ -390,7 +410,7 @@ int main()
          // Check for key presses
          else if (event.type == sf::Event::KeyPressed)
          {
-            handleKeyPress(event.key.code, window, player, Textures,
+            handleKeyPress(event.key.code, window, player, Textures, AdjacentTextures,
                            CurrentMap, AdjacentMap, black_texture, VisibleGrid);
          }
       } // End of event poll

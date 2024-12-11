@@ -19,6 +19,7 @@ void drawVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
 // - occurs during hard loading zone (e.g. doors)
 void initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
                           const std::vector<sf::Texture>& Textures,
+                          const std::vector<sf::Texture>& AdjacentTextures,
                           const Map& map, const Player& player);
 
 // Function: translateVisibleGridRight()
