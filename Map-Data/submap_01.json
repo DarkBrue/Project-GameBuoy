@@ -1,0 +1,32 @@
+﻿{
+   "texture_atlas": "Assets/Texture-Atlas/mountain_terrain.png",
+   "map_width": 10,
+   "map_height": 11,
+   "MapData": [
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  3, 12, 12, 12, 12, 12, 12,  3,  1],
+      [ 1,  1,  1,  1,  1, 12,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1, 12,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1, 12,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1, 12,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1, 12,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1, 12, 12, 12,  3,  1],
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1,  1]
+   ],
+   "CollisionData": [0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
+   "SubareaLocations": [1, 2, 4, 6,
+                        8, 2, 12, 7,
+                        8, 8, 6, 5],
+   "SubareaSources": ["Map-Data/map_01.json", "Map-Data/map_01.json",
+                      "Map-Data/map_06.json"],
+   "north_map_source": "NA",
+   "north_x_entrance": 0,
+   "west_map_source": "NA",
+   "west_y_entrance": 0,
+   "east_map_source": "NA",
+   "east_y_entrance": 0,
+   "south_map_source": "NA",
+   "south_x_entrance": 0
+}

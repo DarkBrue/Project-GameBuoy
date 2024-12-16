@@ -22,6 +22,11 @@ void initializeVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WID
                           const std::vector<sf::Texture>& AdjacentTextures,
                           const Map& map, const Player& player);
 
+// Function: clearVisibleGrid
+// - turns all tiles of the grid black
+void clearVisibleGrid(sf::Sprite (&VisibleGrid)[VISIBLE_HEIGHT][VISIBLE_WIDTH],
+                      const sf::Texture& black_texture);
+
 // Function: translateVisibleGridRight()
 // - translates tiles within a sprite to its left neighbor
 // - loads in a new column of tiles on the far left column

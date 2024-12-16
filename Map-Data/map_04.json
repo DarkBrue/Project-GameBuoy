@@ -21,6 +21,8 @@
       [ 2, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
    ],
    "CollisionData": [0, 1, 1, 0],
+   "SubareaLocations": [],
+   "SubareaSources": ["NA"],
    "north_map_source": "NA",
    "north_x_entrance": 0,
    "west_map_source": "NA",

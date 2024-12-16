@@ -26,6 +26,9 @@ bool map_loaded_from_north = false;
 // Checks if a map is currently loaded
 bool is_map_loaded = false;
 
+// Keeps track of which subarea we entered within a map
+int subarea_index = 0;
+
 // Don't touch this variable unless you know what you are doing
 // Used to scale window and sprites
 int scale_factor = 2;
@@ -58,10 +61,27 @@ void extractTextures(std::vector<sf::Texture>& Textures, const Map& map)
    }
 }
 
+// Function: checkSubarea
+// - checks if the tile the player walked on is a subarea entrance
+// - returns true if there is a subarea, false otherwise
+bool checkSubarea(const Player& player, const Map& map)
+{
+   for (int i = 0; i < map.SubareaLocations.size(); i += 4)
+   {
+      if (player.pos_X == map.SubareaLocations[i]
+          && player.pos_Y == map.SubareaLocations[i + 1])
+      {
+         subarea_index = i / 4;
+         return true;
+      }
+   }
+   return false;
+}
+
 // Function: checkCollision
 // - checks if the direction the player wants to go has collision
 // - returns true if there is collision, false otherwise
-bool checkCollision(sf::Keyboard::Key input, Player& player, const Map& map)
+bool checkCollision(sf::Keyboard::Key input, const Player& player, const Map& map)
 {
    if (input == RIGHT_KEY && player.pos_X + 1 < map.map_width)
    {
@@ -320,7 +340,31 @@ void handleKeyPress(sf::Keyboard::Key input, sf::RenderWindow& window, Player& p
             translateVisibleGridUp(VisibleGrid, CurrentMap, Textures,
                                    player, black_texture);
          }
-         drawVisibleGrid(VisibleGrid, window, player);
+
+         // Check is player entered a subarea tile
+         if (checkSubarea(player, CurrentMap))
+         {
+            // Change position based on subarea entrance
+            player.pos_X = CurrentMap.SubareaLocations[(subarea_index * 4) + 2];
+            player.pos_Y = CurrentMap.SubareaLocations[(subarea_index * 4) + 3];
+
+            AdjacentMap = loadMap(CurrentMap.SubareaSources[subarea_index]);
+            extractTextures(AdjacentTextures, AdjacentMap);
+            std::swap(CurrentMap, AdjacentMap);
+            std::swap(Textures, AdjacentTextures);
+
+            clearVisibleGrid(VisibleGrid, black_texture);
+            initializeVisibleGrid(VisibleGrid, Textures, AdjacentTextures,
+                            CurrentMap, player);
+            drawVisibleGrid(VisibleGrid, window, player);
+
+            unloadMap(AdjacentMap);
+         }
+         // Do standard draw
+         else
+         {
+            drawVisibleGrid(VisibleGrid, window, player);
+         }
       } // Done checking movement keys
    }// Done checking for collision
 

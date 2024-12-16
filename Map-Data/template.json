@@ -1,0 +1,19 @@
+﻿{
+   "texture_atlas": "Assets/Texture-Atlas/SOURCE.png",
+   "map_width": 0,
+   "map_height": 0,
+   "MapData": [
+      []
+   ],
+   "CollisionData": [],
+   "SubareaLocations": [],
+   "SubareaSources": ["NA"],
+   "north_map_source": "NA",
+   "north_x_entrance": 0,
+   "west_map_source": "NA",
+   "west_y_entrance": 0,
+   "east_map_source": "NA",
+   "east_y_entrance": 0,
+   "south_map_source": "NA",
+   "south_x_entrance": 0
+}

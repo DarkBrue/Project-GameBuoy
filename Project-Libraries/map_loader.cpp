@@ -49,6 +49,9 @@ Map loadMap(const std::string& filename)
 
    map.CollisionData = parsed["CollisionData"].get<std::vector<int>>();
 
+   map.SubareaLocations = parsed["SubareaLocations"].get<std::vector<int>>();
+   map.SubareaSources = parsed["SubareaSources"].get<std::vector<std::string>>();
+
    map.north_map_source = parsed["north_map_source"];
    map.east_map_source = parsed["east_map_source"];
    map.west_map_source = parsed["west_map_source"];
@@ -76,6 +79,8 @@ void unloadMap(Map& map)
    map.texture_atlas_width = 0;
    map.texture_atlas_height = 0;
    map.CollisionData.clear();
+   map.SubareaLocations.clear();
+   map.SubareaSources.clear();
    map.north_map_source = "NA";
    map.east_map_source = "NA";
    map.west_map_source = "NA";
