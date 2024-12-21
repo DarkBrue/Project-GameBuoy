@@ -13,6 +13,7 @@
 #include <fstream>   // For opening files
 #include <vector>   // For vector
 #include <string>   // For string
+#include "npc.h"   // For npc related functions and data
 
 struct Map {
    sf::Texture texture_atlas; // Store texture atlas
@@ -24,6 +25,7 @@ struct Map {
    std::vector<int> CollisionData; // Array for storing collision data
    std::vector<int> SubareaLocations; // Locations of sub areas in a map
    std::vector<std::string> SubareaSources; // Store source path for subareas
+   std::vector<npc> NPCList; // Store list of NPC's and their data
    std::string north_map_source; // Store source path for north map
    std::string west_map_source;
    std::string east_map_source;

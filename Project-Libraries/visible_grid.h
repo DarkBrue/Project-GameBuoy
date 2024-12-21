@@ -5,8 +5,11 @@
 // Header for visible_grid.cpp
 // Houses functions related to VisibleGrid
 
+#pragma once
+
 #include "constants.h"   // Access to commonly used constants
 #include "map_loader.h"   // Access to Map struct
+#include "player.h" // Access anything related to the player
 #include <vector>   // For vector
 
 // Function: drawVisibleGrid

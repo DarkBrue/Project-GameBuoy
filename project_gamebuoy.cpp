@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>   // For window/rendering calls
 #include <vector>   // For std::vector
 #include <utility>   // For std::swap
+#include "Project-Libraries/player.h"   // Handles anything related to the player
 #include "Project-Libraries/resize_window.h"   // Handles resizing screen
 #include "Project-Libraries/map_loader.h"   // Handles loading and unloading map data
 #include "Project-Libraries/constants.h"   // Access to commonly used variables
@@ -441,6 +442,7 @@ int main()
    sf::RenderWindow window(sf::VideoMode(DEFAULT_WINDOW_WIDTH * scale_factor,
                                          DEFAULT_WINDOW_HEIGHT * scale_factor),
                                          "GameBuoy");
+
 
    // Start game loop
    while (window.isOpen())

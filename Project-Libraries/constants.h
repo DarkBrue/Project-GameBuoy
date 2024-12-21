@@ -14,13 +14,6 @@
 
 #include <SFML/Graphics.hpp>   // For window/rendering calls
 
-struct Player
-{
-   int pos_X; // Player x position within a map
-   int pos_Y; // Player y position within a map
-   sf::Sprite player_sprite;
-   //std::vector<sf::Texture> player_animations (FILL LATER);
-};
 
 // Function: getScaleFactor
 // - gets scale_factor, a constant variable in project_gamebuoy.cpp
